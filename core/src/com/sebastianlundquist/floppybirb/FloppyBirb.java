@@ -19,25 +19,27 @@ public class FloppyBirb extends ApplicationAdapter {
 	private Texture topTube;
 	private Texture bottomTube;
 	private Texture gameOver;
-	private int flopState = 0;
-	private int pause = 0;
-	private float birdY = 0;
-	private float velocity = 0;
-	private int gameState = 0;
-	private int gap = 400;
-	private int maxTubeOffset;
-	private float tubeVelocity = 12;
-	private int numberOfTubes = 4;
-	private float[] tubeX = new float[numberOfTubes];
-	private int[] tubeOffsets = new int[numberOfTubes];
-	private float distanceBetweenTubes;
-	private Random random;
+
 	private Circle birdCircle;
 	private Rectangle[] topTubeRectangles;
 	private Rectangle[] bottomTubeRectangles;
+	private BitmapFont font;
+	private Random random;
+
+	private int gameState = 0;
+	private int flopState = 0;
+	private int pause = 0;
+	private int gap = 400;
+	private int numberOfTubes = 4;
+	private int maxTubeOffset;
 	private int score = 0;
 	private int scoringTube;
-	private BitmapFont font;
+	private int[] tubeOffsets = new int[numberOfTubes];
+
+	private float birdY = 0;
+	private float velocity = 0;
+	private float[] tubeX = new float[numberOfTubes];
+	private float distanceBetweenTubes;
 
 	@Override
 	public void create () {
@@ -71,23 +73,20 @@ public class FloppyBirb extends ApplicationAdapter {
 			if (tubeX[scoringTube] < Gdx.graphics.getWidth() / 2f) {
 				score++;
 				Gdx.app.log("Score", String.valueOf(score));
-				if (scoringTube < numberOfTubes - 1) {
+				if (scoringTube < numberOfTubes - 1)
 					scoringTube++;
-				}
-				else {
+				else
 					scoringTube = 0;
-				}
 			}
-			if (Gdx.input.justTouched()) {
+			if (Gdx.input.justTouched())
 				velocity = -30;
-			}
 			for (int i = 0; i < numberOfTubes; i++) {
 				if (tubeX[i] < -topTube.getWidth()) {
 					tubeX[i] += numberOfTubes * distanceBetweenTubes;
 					tubeOffsets[i] = random.nextInt(maxTubeOffset);
 				}
 				else {
-					tubeX[i] -= tubeVelocity;
+					tubeX[i] -= 12;
 				}
 				batch.draw(topTube, tubeX[i], Gdx.graphics.getHeight() / 2f + gap + tubeOffsets[i]);
 				batch.draw(bottomTube, tubeX[i], Gdx.graphics.getHeight() / 2f - bottomTube.getHeight() - gap + tubeOffsets[i]);
@@ -105,18 +104,17 @@ public class FloppyBirb extends ApplicationAdapter {
 
 		}
 		else if (gameState == 0) {
-			if (Gdx.input.justTouched()) {
+			if (Gdx.input.justTouched())
 				gameState = 1;
-			}
 		}
 		else if (gameState == 2) {
 			batch.draw(gameOver, Gdx.graphics.getWidth() / 2f - gameOver.getWidth() / 2f, 3 * Gdx.graphics.getHeight() / 4f - gameOver.getHeight() / 2f);
 			if (Gdx.input.justTouched()) {
 				gameState = 1;
-				startGame();
 				score = 0;
 				scoringTube = 0;
 				velocity = 0;
+				startGame();
 			}
 		}
 
@@ -135,9 +133,8 @@ public class FloppyBirb extends ApplicationAdapter {
 
 		birdCircle.set(Gdx.graphics.getWidth() / 2f, birdY + birds[flopState].getHeight() / 2f, birds[flopState].getWidth() / 2f);
 		for (int i = 0; i < numberOfTubes; i++) {
-			if (Intersector.overlaps(birdCircle, topTubeRectangles[i]) || Intersector.overlaps(birdCircle, bottomTubeRectangles[i])) {
+			if (Intersector.overlaps(birdCircle, topTubeRectangles[i]) || Intersector.overlaps(birdCircle, bottomTubeRectangles[i]))
 				gameState = 2;
-			}
 		}
 	}
 	
@@ -147,7 +144,7 @@ public class FloppyBirb extends ApplicationAdapter {
 		background.dispose();
 	}
 
-	public void startGame() {
+	private void startGame() {
 		birdY = Gdx.graphics.getHeight() / 2f - birds[flopState].getHeight() / 2f;
 		for (int i = 0; i < numberOfTubes; i++) {
 			tubeOffsets[i] = random.nextInt(maxTubeOffset);
