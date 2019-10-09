@@ -12,15 +12,39 @@ public class FloppyBirb extends ApplicationAdapter {
 	Texture[] birds;
 	int flopState = 0;
 	int pause = 0;
+	float birdY = 0;
+	float velocity = 0;
+	int gameState = 0;
 
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-
+		background = new Texture("bg.png");
+		birds = new Texture[2];
+		birds[0] = new Texture("bird.png");
+		birds[1] = new Texture("bird2.png");
+		birdY = Gdx.graphics.getHeight() / 2f - birds[flopState].getHeight() / 2f;
 	}
 
 	@Override
 	public void render () {
+		if (gameState != 0) {
+			if (Gdx.input.justTouched()) {
+				velocity = -30;
+			}
+			if (birdY > 0 || velocity < 0) {
+				velocity += 2;
+				birdY -= velocity;
+			}
+			else {
+				birdY = 0;
+			}
+		}
+		else {
+			if (Gdx.input.justTouched()) {
+				gameState = 1;
+			}
+		}
 		if (pause < 8)
 			pause++;
 		else {
@@ -31,12 +55,8 @@ public class FloppyBirb extends ApplicationAdapter {
 				flopState = 0;
 		}
 		batch.begin();
-		background = new Texture("bg.png");
-		birds = new Texture[2];
-		birds[0] = new Texture("bird.png");
-		birds[1] = new Texture("bird2.png");
 		batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		batch.draw(birds[flopState],Gdx.graphics.getWidth() / 2f - birds[flopState].getWidth() / 2f, Gdx.graphics.getHeight() / 2f - birds[flopState].getHeight() / 2f);
+		batch.draw(birds[flopState],Gdx.graphics.getWidth() / 2f - birds[flopState].getWidth() / 2f, birdY);
 		batch.end();
 	}
 	
