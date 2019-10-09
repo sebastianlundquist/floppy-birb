@@ -4,8 +4,8 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
@@ -34,6 +34,9 @@ public class FloppyBirb extends ApplicationAdapter {
 	private Circle birdCircle;
 	private Rectangle[] topTubeRectangles;
 	private Rectangle[] bottomTubeRectangles;
+	private int score = 0;
+	private int scoringTube;
+	private BitmapFont font;
 
 	@Override
 	public void create () {
@@ -52,6 +55,9 @@ public class FloppyBirb extends ApplicationAdapter {
 		birdCircle = new Circle();
 		topTubeRectangles = new Rectangle[numberOfTubes];
 		bottomTubeRectangles = new Rectangle[numberOfTubes];
+		font = new BitmapFont();
+		font.setColor(Color.WHITE);
+		font.getData().setScale(12);
 		for (int i = 0; i < numberOfTubes; i++) {
 			tubeOffsets[i] = random.nextInt(maxTubeOffset);
 			tubeX[i] = Gdx.graphics.getWidth() / 2f - topTube.getWidth() / 2f + + Gdx.graphics.getWidth() + i * distanceBetweenTubes;
@@ -65,6 +71,16 @@ public class FloppyBirb extends ApplicationAdapter {
 		batch.begin();
 		batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		if (gameState != 0) {
+			if (tubeX[scoringTube] < Gdx.graphics.getWidth() / 2f) {
+				score++;
+				Gdx.app.log("Score", String.valueOf(score));
+				if (scoringTube < numberOfTubes - 1) {
+					scoringTube++;
+				}
+				else {
+					scoringTube = 0;
+				}
+			}
 			if (Gdx.input.justTouched()) {
 				velocity = -30;
 			}
@@ -106,6 +122,7 @@ public class FloppyBirb extends ApplicationAdapter {
 				flopState = 0;
 		}
 		batch.draw(birds[flopState],Gdx.graphics.getWidth() / 2f - birds[flopState].getWidth() / 2f, birdY);
+		font.draw(batch, String.valueOf(score), 100, 200);
 		batch.end();
 
 		birdCircle.set(Gdx.graphics.getWidth() / 2f, birdY + birds[flopState].getHeight() / 2f, birds[flopState].getWidth() / 2f);
